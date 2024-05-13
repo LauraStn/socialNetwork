@@ -15,5 +15,5 @@ app.use("/user", userRoutes);
 // app.use('/rental', rentalRoutes)
 
 app.listen(process.env.PORT, () => {
-  console.log("it works");
+  console.log(`listening on port ${process.env.PORT}`);
 });

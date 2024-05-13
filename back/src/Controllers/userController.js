@@ -30,10 +30,11 @@ const register = async (req, res) => {
       req.body.first_name,
       req.body.last_name,
       req.body.picture,
-      activationToken,
       new Date(),
       new Date(),
-      new Date()
+      new Date(),
+      0,
+      activationToken
     );
     const email = [user.email];
     const sqlverif = `SELECT email FROM user WHERE email=?`;
@@ -42,6 +43,7 @@ const register = async (req, res) => {
       res.status(400).json({ message: "email already used" });
       return;
     }
+    console.log(user);
     const sql = `INSERT INTO user (email, password, first_name, last_name, picture, token ) VALUES (?,?,?,?,?,?)`;
     const values = [
       user.email,
