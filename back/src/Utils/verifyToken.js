@@ -2,10 +2,10 @@ const jwt = require("jsonwebtoken");
 const { extractToken } = require("./extractToken");
 require("dotenv").config();
 
-const verifyToken = async (req, res) => {
+const verifyToken = async (req) => {
   const token = await extractToken(req);
   if (token === undefined || !token) {
-    res.status(400).json({ error: "Bad request" });
+    // res.status(400).json({ error: "Bad request" });
     console.log(token);
     return;
   } else {
