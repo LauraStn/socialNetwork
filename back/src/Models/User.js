@@ -5,7 +5,7 @@ class User {
     role_id,
     first_name,
     last_name,
-    picture,
+    image,
     gdpr,
     created_at,
     update_at,
@@ -17,7 +17,7 @@ class User {
     this.role_id = role_id;
     this.first_name = first_name;
     this.last_name = last_name;
-    this.picture = picture;
+    this.image = image;
     this.gdpr = gdpr;
     this.createdAt = created_at;
     this.updateAt = update_at;

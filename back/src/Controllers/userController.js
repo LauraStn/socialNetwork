@@ -29,7 +29,7 @@ const register = async (req, res) => {
       2,
       req.body.first_name,
       req.body.last_name,
-      req.body.picture,
+      req.file.filename,
       new Date(),
       new Date(),
       new Date(),
@@ -44,13 +44,13 @@ const register = async (req, res) => {
       return;
     }
     console.log(user);
-    const sql = `INSERT INTO user (email, password, first_name, last_name, picture, token ) VALUES (?,?,?,?,?,?)`;
+    const sql = `INSERT INTO user (email, password, first_name, last_name, image, token ) VALUES (?,?,?,?,?,?)`;
     const values = [
       user.email,
       user.password,
       user.first_name,
       user.last_name,
-      user.picture,
+      user.image,
       user.token,
     ];
     const [rows] = await pool.execute(sql, values);
@@ -120,7 +120,7 @@ const login = async (req, res) => {
           firstName: user[0].first_name,
           lastName: user[0].last_name,
           email: user[0].email,
-          picture: user[0].picture,
+          image: user[0].image,
           role_id: user[0].role_id,
         },
         process.env.SECRET_KEY,
@@ -130,7 +130,7 @@ const login = async (req, res) => {
         jwt: token,
         role_id: user[0].role_id,
         firstName: user[0].first_name,
-        picture: user[0].picture,
+        image: user[0].image,
       });
       return;
     }
@@ -236,7 +236,52 @@ const searchUser = async (req, res) => {
   }
 };
 
-const follow = async (req, res) => {};
+const resetPassword = async (req, res) => {
+  try {
+    const email = req.body.email;
+    if (!email) {
+      res.status(400).json({ error: "Enter your email" });
+      console.log("enter your email");
+      return;
+    }
+    const value = [email];
+    const sql = `SELECT * FROM user WHERE email = ?`;
+    const [result] = await pool.execute(sql, value);
+    if (!result) {
+      res.status(400).json({ message: "email not found" });
+      return;
+    }
+    const info = await transporter.sendMail({
+      from: `${process.env.SMTP_EMAIL}`,
+      to: result[0].email,
+      subject: "Reset password",
+      text: "Reset your password",
+      html: `<p>Someone (probably you) requested to reset the password to your account. If you didn\'t submit this request, ignore this email, and your password will not be changed. Please click on this link: <a href="http://localhost:2200/user/changepassword/${result[0].user_id}">Reset your password</a></p>`,
+    });
+    console.log(result[0].user_id);
+    res.status(201).json({ success: true, msg: "email send" });
+  } catch (error) {
+    res.status(500).json({ error: error.stack });
+    console.log(error.stack);
+  }
+};
+
+const updatePassword = async (req, res) => {
+  try {
+    const id = req.params.user_id;
+    const hashedPassword = await bcrypt.hash(req.body.password + "", 10);
+
+    const values = [hashedPassword, id];
+    const sql = `UPDATE user SET password=? WHERE user_id=?`;
+    console.log(id, hashedPassword);
+    const [result] = await pool.execute(sql, values);
+    console.log(result);
+    res.status(200).json({ success: true, msg: "password changed" });
+  } catch (error) {
+    console.log(error.stack);
+    res.status(500).json({ message: "erreur serveur" });
+  }
+};
 
 module.exports = {
   register,
@@ -248,4 +293,6 @@ module.exports = {
   getOneUser,
   banUser,
   searchUser,
+  resetPassword,
+  updatePassword,
 };
