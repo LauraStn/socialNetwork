@@ -6,6 +6,7 @@ const bcrypt = require("bcrypt");
 const { extractToken } = require("../Utils/extractToken");
 const { verifyToken } = require("../Utils/verifyToken");
 const { transporter } = require("../Services/mailer");
+const { upload } = require("../Utils/multer");
 
 const register = async (req, res) => {
   try {
@@ -36,6 +37,7 @@ const register = async (req, res) => {
       0,
       activationToken
     );
+
     const email = [user.email];
     const sqlverif = `SELECT email FROM user WHERE email=?`;
     const [verifEMail] = await pool.execute(sqlverif, email);
@@ -43,7 +45,6 @@ const register = async (req, res) => {
       res.status(400).json({ message: "email already used" });
       return;
     }
-    console.log(user);
     const sql = `INSERT INTO user (email, password, first_name, last_name, image, token ) VALUES (?,?,?,?,?,?)`;
     const values = [
       user.email,
@@ -54,7 +55,6 @@ const register = async (req, res) => {
       user.token,
     ];
     const [rows] = await pool.execute(sql, values);
-    console.log(values);
     const info = await transporter.sendMail({
       from: `${process.env.SMTP_EMAIL}`,
       to: user.email,
@@ -117,8 +117,8 @@ const login = async (req, res) => {
       const token = jwt.sign(
         {
           user_id: user[0].user_id,
-          firstName: user[0].first_name,
-          lastName: user[0].last_name,
+          first_name: user[0].first_name,
+          last_name: user[0].last_name,
           email: user[0].email,
           image: user[0].image,
           role_id: user[0].role_id,
@@ -273,10 +273,83 @@ const updatePassword = async (req, res) => {
 
     const values = [hashedPassword, id];
     const sql = `UPDATE user SET password=? WHERE user_id=?`;
-    console.log(id, hashedPassword);
     const [result] = await pool.execute(sql, values);
     console.log(result);
     res.status(200).json({ success: true, msg: "password changed" });
+  } catch (error) {
+    res.status(500).json({ message: "erreur serveur" });
+    return;
+  }
+};
+
+const follow = async (req, res) => {
+  const data = await verifyToken(req);
+  if (!data) {
+    res.status(401).json({ error: "Unauthorized" });
+    return;
+  }
+  try {
+    const following_id = req.body.user_id;
+    const follower_id = data.user_id;
+    const values = [following_id, follower_id];
+    const sql = `INSERT INTO follow (following_user_id, follower_user_id) VALUES (?,?)`;
+    const [result] = await pool.execute(sql, values);
+    res.status(201).json({ success: true, msg: "follow" });
+  } catch (error) {
+    res.status(500).json({ message: "erreur serveur" });
+    return;
+  }
+};
+
+const unfollow = async (req, res) => {
+  const data = await verifyToken(req);
+  if (!data) {
+    res.status(401).json({ error: "Unauthorized" });
+    return;
+  }
+  try {
+    const following_id = req.body.user_id;
+    const follower_id = data.user_id;
+    const values = [following_id, follower_id];
+    const sql = `DELETE FROM follow WHERE following_user_id = ? AND follower_user_id = ?`;
+    const [result] = await pool.execute(sql, values);
+    res.status(200).json({ success: true, msg: "unfollow" });
+  } catch (error) {
+    console.log(error.stack);
+    res.status(500).json({ message: "erreur serveur" });
+  }
+};
+
+const getAllUserFollower = async (req, res) => {
+  const data = await verifyToken(req);
+  if (!data) {
+    res.status(401).json({ error: "Unauthorized" });
+    return;
+  }
+  try {
+    const following_id = data.user_id;
+    const values = [following_id];
+    const sql = `SELECT * FROM follow INNER JOIN user ON user.user_id = follow.follower_user_id WHERE following_user_id = ?`;
+    const [result] = await pool.execute(sql, values);
+    res.status(200).json(result);
+  } catch (error) {
+    console.log(error.stack);
+    res.status(500).json({ message: "erreur serveur" });
+  }
+};
+
+const getAllUserFollowing = async (req, res) => {
+  const data = await verifyToken(req);
+  if (!data) {
+    res.status(401).json({ error: "Unauthorized" });
+    return;
+  }
+  try {
+    const follower_id = data.user_id;
+    const values = [follower_id];
+    const sql = `SELECT * FROM follow INNER JOIN user ON user.user_id = follow.following_user_id WHERE follower_user_id = ?`;
+    const [result] = await pool.execute(sql, values);
+    res.status(200).json(result);
   } catch (error) {
     console.log(error.stack);
     res.status(500).json({ message: "erreur serveur" });
@@ -295,4 +368,8 @@ module.exports = {
   searchUser,
   resetPassword,
   updatePassword,
+  follow,
+  unfollow,
+  getAllUserFollower,
+  getAllUserFollowing,
 };

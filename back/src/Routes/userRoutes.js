@@ -11,6 +11,10 @@ const {
   searchUser,
   resetPassword,
   updatePassword,
+  follow,
+  unfollow,
+  getAllUserFollower,
+  getAllUserFollowing,
 } = require("../Controllers/userController");
 const { verifUserUpdate } = require("../Utils/middlewares");
 const { upload } = require("../Utils/multer");
@@ -27,5 +31,9 @@ router.patch("/ban", banUser);
 router.get("/search", searchUser);
 router.post("/reset", resetPassword);
 router.patch("/changepassword/:user_id", updatePassword);
+router.post("/follow", follow);
+router.delete("/unfollow", unfollow);
+router.get("/allfollower", getAllUserFollower);
+router.get("/allfollowing", getAllUserFollowing);
 
 module.exports = router;
