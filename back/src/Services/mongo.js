@@ -1,6 +1,6 @@
 const { MongoClient, Db } = require("mongodb");
 
-const client = null;
+let client = null;
 
 function connect(url, callback) {
   if (client === null) {
