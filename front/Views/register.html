@@ -8,91 +8,139 @@
   <body>
     <main>
       <div
-        class="bg-gradient-to-b from-[#063970] to-blue-200 min-h-screen flex items-center justify-center"
+        class="flex h-screen bg-cover no-repeat"
+        style="
+          background-image: url(https://img.freepik.com/photos-gratuite/maldives_74190-477.jpg?t=st=1716543164~exp=1716546764~hmac=389dce94dd5dc655bb2164fbe4b6757ffc1d264f9aae3815551e9b4fd4e6aa00&w=996);
+        "
       >
-        <div class="bg-blue-200 p-8 rounded shadow-md max-w-md w-full mx-auto">
-          <h2 class="text-2xl font-semibold mb-4">Register</h2>
+        <div
+          class="hidden lg:flex items-center justify-center bg-white text-black"
+        >
+          <!-- <img
+            class="bg-cover"
+            src="./images/fond-plage-vagues_23-2147836090.png"
+            alt=""
+          /> -->
+        </div>
+        <div
+          class="w-full bg-gray-100 lg:w-1/2 flex items-center justify-center"
+        >
+          <div class="max-w-md w-full p-6">
+            <h1 class="text-3xl font-semibold mb-6 text-black text-center">
+              Sign Up
+            </h1>
+            <h1 class="text-sm font-semibold mb-6 text-gray-500 text-center">
+              Join to Our Community with all time access and free
+            </h1>
+            <div
+              class="mt-4 flex flex-col lg:flex-row items-center justify-between"
+            ></div>
 
-          <form action="#" method="POST">
-            <div class="grid grid-cols-2 gap-4">
+            <form action="#" method="POST" class="space-y-4">
+              <div class="grid grid-cols-2 gap-4">
+                <div>
+                  <label
+                    for="first_nameR"
+                    class="block text-sm font-medium text-gray-700"
+                    >First name</label
+                  >
+                  <input
+                    type="text"
+                    id="first_nameR"
+                    name="first_nameR"
+                    class="mt-1 p-2 w-full border rounded-md focus:border-gray-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-300 transition-colors duration-300"
+                  />
+                </div>
+                <div>
+                  <label
+                    for="last_nameR"
+                    class="block text-sm font-medium text-gray-700"
+                    >Last name</label
+                  >
+                  <input
+                    type="text"
+                    id="last_nameR"
+                    name="last_nameR"
+                    class="mt-1 p-2 w-full border rounded-md focus:border-gray-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-300 transition-colors duration-300"
+                  />
+                </div>
+              </div>
               <div>
                 <label
-                  for="first_nameR"
+                  for="image"
                   class="block text-sm font-medium text-gray-700"
-                  >First name</label
+                  >Picture</label
                 >
                 <input
-                  type="text"
-                  id="first_nameR"
-                  name="first_nameR"
-                  class="mt-1 p-2 w-full border rounded-md"
+                  type="file"
+                  id="image"
+                  name="image"
+                  class="mt-1 p-2 w-full border rounded-md focus:border-gray-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-300 transition-colors duration-300"
                 />
               </div>
               <div>
                 <label
-                  for="last_nameR"
+                  for="emailR"
                   class="block text-sm font-medium text-gray-700"
-                  >Last name</label
+                  >Email</label
                 >
                 <input
                   type="text"
-                  id="last_nameR"
-                  name="last_nameR"
-                  class="mt-1 p-2 w-full border rounded-md"
+                  id="emailR"
+                  name="emailR"
+                  class="mt-1 p-2 w-full border rounded-md focus:border-gray-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-300 transition-colors duration-300"
                 />
               </div>
+              <div>
+                <label
+                  for="passwordR"
+                  class="block text-sm font-medium text-gray-700"
+                  >Password</label
+                >
+                <input
+                  type="password"
+                  id="passwordR"
+                  name="passwordR"
+                  class="mt-1 p-2 w-full border rounded-md focus:border-gray-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-300 transition-colors duration-300"
+                />
+              </div>
+              <div>
+                <label
+                  for="confirm_passwordR"
+                  class="block text-sm font-medium text-gray-700"
+                  >Confirm password</label
+                ><span class="passwordMsg"></span>
+                <input
+                  type="password"
+                  id="confirm_passwordR"
+                  name="confirm_passwordR"
+                  class="mt-1 p-2 w-full border rounded-md focus:border-gray-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-300 transition-colors duration-300"
+                />
+              </div>
+              <div>
+                <button
+                  class="registerBtn w-full bg-black text-white p-2 rounded-md hover:bg-gray-800 focus:outline-none focus:bg-black focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-900 transition-colors duration-300"
+                >
+                  Sign Up
+                </button>
+              </div>
+              <div class="mt-4">
+                <p class="registerMsg"></p>
+              </div>
+            </form>
+            <div class="mt-4 text-sm text-gray-600 text-center">
+              <p>
+                Already have an account?
+                <a href="./login.html" class="text-blue-600 hover:underline"
+                  >Login here</a
+                >
+              </p>
             </div>
-            <div class="mt-4">
-              <label for="image" class="block text-sm font-medium text-gray-700"
-                >Picture</label
-              >
-              <input
-                type="file"
-                id="image"
-                name="image"
-                class="mt-1 p-2 w-full border rounded-md"
-              />
-            </div>
-            <div class="mt-4">
-              <label
-                for="emailR"
-                class="block text-sm font-medium text-gray-700"
-                >Email</label
-              >
-              <input
-                type="email"
-                id="emailR"
-                name="emailR"
-                class="mt-1 p-2 w-full border rounded-md"
-              />
-            </div>
-            <div class="mt-4">
-              <label
-                for="passwordR"
-                class="block text-sm font-medium text-gray-700"
-                >Password</label
-              >
-              <input
-                type="password"
-                id="passwordR"
-                name="passwordR"
-                class="mt-1 p-2 w-full border rounded-md"
-              />
-            </div>
-            <div class="mt-4">
-              <p class="registerMsg"></p>
-            </div>
-            <div class="mt-6">
-              <button
-                class="signInBtn w-full p-3 bg-cyan-600 text-white rounded-md hover:bg-cyan-800"
-              >
-                Sign in
-              </button>
-            </div>
-          </form>
+          </div>
         </div>
       </div>
     </main>
+    <!-- <script src="../Assets/post.js"></script> -->
     <script src="../Assets/auth.js"></script>
     <script src="https://cdn.tailwindcss.com"></script>
   </body>
