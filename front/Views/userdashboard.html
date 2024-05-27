@@ -1,0 +1,306 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
+  <body>
+    <div class="app bg-gray-100">
+      <nav
+        class="bg-white w-full flex relative shadow justify-between items-center px-8 h-20"
+      >
+        <div class="inline-flex gap-2">
+          <a class="_o6689fn" href="./home.html">
+            <svg
+              viewBox="0 0 24 24"
+              width="24"
+              height="24"
+              stroke="currentColor"
+              stroke-width="2"
+              fill="none"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              class="css-i6dzq1"
+            >
+              <circle cx="12" cy="5" r="3"></circle>
+              <line x1="12" y1="22" x2="12" y2="8"></line>
+              <path d="M5 12H2a10 10 0 0 0 20 0h-3"></path>
+            </svg>
+          </a>
+          <a href="./home.html">Home</a>
+        </div>
+
+        <div class="relative hidden sm:block flex-shrink flex-grow-0">
+          <ul class="authBtn flex gap-6">
+            <li>
+              <a href="./login.html">Login</a>
+            </li>
+            <li>
+              <a href="./register.html">Register</a>
+            </li>
+          </ul>
+        </div>
+
+        <div class="flex-initial">
+          <div class="flex justify-end items-center relative">
+            <div class="flex mr-4 items-center">
+              <div class="block relative">
+                <a
+                  href="./search.html"
+                  class="inline-block py-2 px-3 hover:bg-gray-200 rounded-full relative"
+                >
+                  <div class="flex items-center h-5">
+                    <div class="_xpkakx">
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        class="h-5 w-5"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                        stroke="currentColor"
+                      >
+                        <path
+                          stroke-linecap="round"
+                          stroke-linejoin="round"
+                          stroke-width="2"
+                          d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
+                        ></path>
+                      </svg>
+                    </div>
+                  </div>
+                </a>
+              </div>
+            </div>
+
+            <div class="block">
+              <div class="inline relative">
+                <button
+                  onclick="displayMenuNav()"
+                  class="inline-flex items-center relative px-2 border rounded-full hover:shadow-lg"
+                >
+                  <div class="pl-1">
+                    <svg
+                      viewBox="0 0 32 32"
+                      xmlns="http://www.w3.org/2000/svg"
+                      aria-hidden="true"
+                      role="presentation"
+                      focusable="false"
+                      style="
+                        display: block;
+                        fill: none;
+                        height: 16px;
+                        width: 16px;
+                        stroke: currentcolor;
+                        stroke-width: 3;
+                        overflow: visible;
+                      "
+                    >
+                      <g fill="none" fill-rule="nonzero">
+                        <path d="m2 16h28"></path>
+                        <path d="m2 24h28"></path>
+                        <path d="m2 8h28"></path>
+                      </g>
+                    </svg>
+                  </div>
+
+                  <div class="block flex-grow-0 flex-shrink-0 h-10 w-12 pl-5">
+                    <svg
+                      viewBox="0 0 32 32"
+                      xmlns="http://www.w3.org/2000/svg"
+                      aria-hidden="true"
+                      role="presentation"
+                      focusable="false"
+                      style="
+                        display: block;
+                        height: 100%;
+                        width: 100%;
+                        fill: currentcolor;
+                      "
+                    >
+                      <path
+                        d="m16 .7c-8.437 0-15.3 6.863-15.3 15.3s6.863 15.3 15.3 15.3 15.3-6.863 15.3-15.3-6.863-15.3-15.3-15.3zm0 28c-4.021 0-7.605-1.884-9.933-4.81a12.425 12.425 0 0 1 6.451-4.4 6.507 6.507 0 0 1 -3.018-5.49c0-3.584 2.916-6.5 6.5-6.5s6.5 2.916 6.5 6.5a6.513 6.513 0 0 1 -3.019 5.491 12.42 12.42 0 0 1 6.452 4.4c-2.328 2.925-5.912 4.809-9.933 4.809z"
+                      ></path>
+                    </svg>
+                  </div>
+                </button>
+              </div>
+              <div
+                class="flex flex-col gap-2 absolute py-2 px-3 top-[42px] left-[54px] bg-white border invisible"
+                id="subMenuNav"
+              >
+                <ul>
+                  <li>
+                    <a
+                      class="userDashboardNav hidden"
+                      href="./userdashboard.html"
+                      >Dashboard</a
+                    >
+                  </li>
+                  <li>
+                    <a
+                      class="adminDashboardNav hidden"
+                      href="./admindashboard.html"
+                      >Admin</a
+                    >
+                  </li>
+                  <li>
+                    <a class="logOutBtn text-red-400 hidden" href="./index.html"
+                      >Logout</a
+                    >
+                  </li>
+                </ul>
+              </div>
+            </div>
+          </div>
+        </div>
+      </nav>
+
+      <main
+        class="grid grid-cols-1 lg:grid-cols-2 gap-6 my-12 mx-12 w-2xl container px-2 mx-auto"
+      >
+        <aside class="">
+          <div class="profil bg-white shadow rounded-lg p-10"></div>
+
+          <div class="bg-white shadow mt-6 rounded-lg p-6">
+            <h3 class="text-gray-600 text-sm font-semibold mb-4">Follower</h3>
+            <ul
+              class="follower flex items-center justify-center space-x-2"
+            ></ul>
+          </div>
+
+          <div class="bg-white shadow mt-6 rounded-lg p-6">
+            <h3 class="text-gray-600 text-sm font-semibold mb-4">Following</h3>
+            <ul
+              class="following flex items-center justify-center space-x-2"
+            ></ul>
+          </div>
+          <div class="displayEditModal relative"></div>
+          <div
+            class="flex justify-center items-center w-full mt-4 min-width: 400px"
+          >
+            <div
+              class="flex items-center justify-center w-full"
+              x-data="{ reportsOpen: false }"
+            >
+              <div
+                class="w-full px-10 py-8 mx-auto bg-white rounded-lg shadow-xl"
+              >
+                <div class="">
+                  <div
+                    @click="reportsOpen = !reportsOpen"
+                    class="flex items-center text-gray-600 w-full border-b overflow-hidden md:mt-0 mb-5 mx-auto"
+                  >
+                    <div
+                      class="w-10 border-r px-2 transform transition duration-300 ease-in-out"
+                      :class="{'rotate-90': reportsOpen,' -translate-y-0.0': !reportsOpen }"
+                    >
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                        stroke-width="1.5"
+                        stroke="currentColor"
+                        class="w-6 h-6"
+                      >
+                        <path
+                          stroke-linecap="round"
+                          stroke-linejoin="round"
+                          d="M19.5 8.25l-7.5 7.5-7.5-7.5"
+                        />
+                      </svg>
+                    </div>
+                    <div class="flex items-center px-2 py-3">
+                      <div class="mx-3">
+                        <button class="hover:underline">My posts</button>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div
+                    class="userPosts flex flex-col p-5 md:p-0 w-full transform transition duration-300 ease-in-out border-b pb-10"
+                    x-cloak
+                    x-show="reportsOpen"
+                    x-collapse
+                    x-collapse.duration.500ms
+                  ></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </aside>
+
+        <article class="">
+          <form class="bg-white shadow rounded-lg mb-6 p-4">
+            <textarea
+              name="message"
+              id="content"
+              placeholder="Type something..."
+              class="w-full rounded-lg p-2 text-sm bg-gray-100 border border-transparent appearance-none rounded-tg placeholder-gray-400"
+            ></textarea>
+            <input type="file" id="image" />
+
+            <footer class="flex justify-between mt-2">
+              <div class="flex gap-2">
+                <span
+                  class="flex items-center transition ease-out duration-300 hover:bg-blue-500 hover:text-white bg-blue-100 w-8 h-8 px-2 rounded-full text-blue-400 cursor-pointer"
+                >
+                  <svg
+                    viewBox="0 0 24 24"
+                    width="24"
+                    height="24"
+                    stroke="currentColor"
+                    stroke-width="2"
+                    fill="none"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    class="css-i6dzq1"
+                  >
+                    <rect
+                      x="3"
+                      y="3"
+                      width="18"
+                      height="18"
+                      rx="2"
+                      ry="2"
+                    ></rect>
+                    <circle cx="8.5" cy="8.5" r="1.5"></circle>
+                    <polyline points="21 15 16 10 5 21"></polyline>
+                  </svg>
+                </span>
+              </div>
+              <span class="postMsg"></span>
+              <button
+                class="postBtn flex items-center py-2 px-4 rounded-lg text-sm bg-blue-600 text-white shadow-lg"
+              >
+                Send
+                <svg
+                  class="ml-1"
+                  viewBox="0 0 24 24"
+                  width="16"
+                  height="16"
+                  stroke="currentColor"
+                  stroke-width="2"
+                  fill="none"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                >
+                  <line x1="22" y1="2" x2="11" y2="13"></line>
+                  <polygon points="22 2 15 22 11 13 2 9 22 2"></polygon>
+                </svg>
+              </button>
+            </footer>
+          </form>
+          <div class="allpost bg-gray-100"></div>
+        </article>
+      </main>
+    </div>
+  </body>
+  <script
+    defer
+    src="https://unpkg.com/@alpinejs/collapse@3.x.x/dist/cdn.min.js"
+  ></script>
+  <script src="https://unpkg.com/alpinejs" defer></script>
+  <script src="../Assets/auth.js"></script>
+  <script src="../Assets/post.js"></script>
+  <script src="https://cdn.tailwindcss.com"></script>
+</html>

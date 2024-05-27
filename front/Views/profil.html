@@ -5,107 +5,156 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Document</title>
   </head>
-  <body>
-    <main>
-      <div class="bg-gray-100 min-h-screen flex items-center justify-center">
-        <div class="bg-white p-8 rounded shadow-md max-w-md w-full mx-auto">
-          <h2 class="text-2xl font-semibold mb-4">Create a post</h2>
-
-          <form action="#" method="POST">
-            <div class="grid grid-cols-2 gap-4">
-              <div>
-                <label
-                  for="content"
-                  class="block text-sm font-medium text-gray-700"
-                  >Text</label
-                >
-                <input
-                  type="text"
-                  id="content"
-                  name="content"
-                  class="mt-1 p-2 w-full border rounded-md"
-                />
-              </div>
-            </div>
-            <div class="mt-4">
-              <label for="image" class="block text-sm font-medium text-gray-700"
-                >Picture</label
-              >
-              <input
-                type="file"
-                id="image"
-                name="image"
-                class="mt-1 p-2 w-full border rounded-md"
-              />
-            </div>
-            <div class="mt-4">
-              <p class="postMsg"></p>
-            </div>
-            <div class="mt-6">
-              <button
-                class="postBtn w-full p-3 bg-cyan-600 text-white rounded-md hover:bg-cyan-800"
-              >
-                Send
-              </button>
-            </div>
-          </form>
+  <body class="bg-gray-100">
+    <div class="app bg-gray-100">
+      <nav
+        class="bg-white w-full flex relative shadow justify-between items-center px-8 h-20"
+      >
+        <div class="inline-flex">
+          <a class="_o6689fn" href="./home.html">
+            <svg
+              viewBox="0 0 24 24"
+              width="24"
+              height="24"
+              stroke="currentColor"
+              stroke-width="2"
+              fill="none"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              class="css-i6dzq1"
+            >
+              <circle cx="12" cy="5" r="3"></circle>
+              <line x1="12" y1="22" x2="12" y2="8"></line>
+              <path d="M5 12H2a10 10 0 0 0 20 0h-3"></path>
+            </svg>
+          </a>
         </div>
-      </div>
-      <section class="h-screen p-8">
-        <h1 class="text-center font-bold text-2xl text-black">Posts</h1>
 
-        <div
-          class="userPosts grid justify-center md:grid-cols-2 lg:grid-cols-3 gap-5 lg:gap-7 my-10"
-        ></div>
-      </section>
-    </main>
-    <!-- <div class="bg-white shadow rounded-lg p-10">
-            <div class="flex flex-col gap-1 text-center items-center">
-              <img
-                class="h-32 w-32 bg-white p-2 rounded-full shadow mb-4"
-                src="https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&amp;ixlib=rb-1.2.1&amp;auto=format&amp;fit=crop&amp;w=2000&amp;q=80"
-                alt=""
-              />
-              <p class="font-semibold">John Doe</p>
-              <div
-                class="text-sm leading-normal text-gray-400 flex justify-center items-center"
-              >
-                <svg
-                  viewBox="0 0 24 24"
-                  class="mr-1"
-                  width="16"
-                  height="16"
-                  stroke="currentColor"
-                  stroke-width="2"
-                  fill="none"
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
+        <div class="relative hidden sm:block flex-shrink flex-grow-0"></div>
+
+        <div class="flex-initial">
+          <div class="flex justify-end items-center relative">
+            <div class="flex mr-4 items-center">
+              <div class="block relative">
+                <button
+                  type="button"
+                  class="inline-block py-2 px-3 hover:bg-gray-200 rounded-full relative"
                 >
-                  <path
-                    d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"
-                  ></path>
-                  <circle cx="12" cy="10" r="3"></circle>
-                </svg>
-                Los Angeles, California
+                  <div class="flex items-center h-5">
+                    <div class="_xpkakx">
+                      <svg
+                        viewBox="0 0 16 16"
+                        xmlns="http://www.w3.org/2000/svg"
+                        aria-hidden="true"
+                        role="presentation"
+                        focusable="false"
+                        style="
+                          display: block;
+                          height: 16px;
+                          width: 16px;
+                          fill: currentcolor;
+                        "
+                      >
+                        <path
+                          d="m8.002.25a7.77 7.77 0 0 1 7.748 7.776 7.75 7.75 0 0 1 -7.521 7.72l-.246.004a7.75 7.75 0 0 1 -7.73-7.513l-.003-.245a7.75 7.75 0 0 1 7.752-7.742zm1.949 8.5h-3.903c.155 2.897 1.176 5.343 1.886 5.493l.068.007c.68-.002 1.72-2.365 1.932-5.23zm4.255 0h-2.752c-.091 1.96-.53 3.783-1.188 5.076a6.257 6.257 0 0 0 3.905-4.829zm-9.661 0h-2.75a6.257 6.257 0 0 0 3.934 5.075c-.615-1.208-1.036-2.875-1.162-4.686l-.022-.39zm1.188-6.576-.115.046a6.257 6.257 0 0 0 -3.823 5.03h2.75c.085-1.83.471-3.54 1.059-4.81zm2.262-.424c-.702.002-1.784 2.512-1.947 5.5h3.904c-.156-2.903-1.178-5.343-1.892-5.494l-.065-.007zm2.28.432.023.05c.643 1.288 1.069 3.084 1.157 5.018h2.748a6.275 6.275 0 0 0 -3.929-5.068z"
+                        ></path>
+                      </svg>
+                    </div>
+                  </div>
+                </button>
               </div>
             </div>
-            <div class="flex justify-center items-center gap-2 my-3">
-              <div class="font-semibold text-center mx-4">
-                <p class="text-black">102</p>
-                <span class="text-gray-400">Posts</span>
-              </div>
-              <div class="font-semibold text-center mx-4">
-                <p class="text-black">102</p>
-                <span class="text-gray-400">Followers</span>
-              </div>
-              <div class="font-semibold text-center mx-4">
-                <p class="text-black">102</p>
-                <span class="text-gray-400">Folowing</span>
-              </div>
-            </div>
-          </div> -->
 
-    <script src="../Assets/post.js"></script>
-    <script src="https://cdn.tailwindcss.com"></script>
+            <div class="block">
+              <div class="inline relative">
+                <button
+                  type="button"
+                  class="inline-flex items-center relative px-2 border rounded-full hover:shadow-lg"
+                >
+                  <div class="pl-1">
+                    <svg
+                      viewBox="0 0 32 32"
+                      xmlns="http://www.w3.org/2000/svg"
+                      aria-hidden="true"
+                      role="presentation"
+                      focusable="false"
+                      style="
+                        display: block;
+                        fill: none;
+                        height: 16px;
+                        width: 16px;
+                        stroke: currentcolor;
+                        stroke-width: 3;
+                        overflow: visible;
+                      "
+                    >
+                      <g fill="none" fill-rule="nonzero">
+                        <path d="m2 16h28"></path>
+                        <path d="m2 24h28"></path>
+                        <path d="m2 8h28"></path>
+                      </g>
+                    </svg>
+                  </div>
+
+                  <div class="block flex-grow-0 flex-shrink-0 h-10 w-12 pl-5">
+                    <svg
+                      viewBox="0 0 32 32"
+                      xmlns="http://www.w3.org/2000/svg"
+                      aria-hidden="true"
+                      role="presentation"
+                      focusable="false"
+                      style="
+                        display: block;
+                        height: 100%;
+                        width: 100%;
+                        fill: currentcolor;
+                      "
+                    >
+                      <path
+                        d="m16 .7c-8.437 0-15.3 6.863-15.3 15.3s6.863 15.3 15.3 15.3 15.3-6.863 15.3-15.3-6.863-15.3-15.3-15.3zm0 28c-4.021 0-7.605-1.884-9.933-4.81a12.425 12.425 0 0 1 6.451-4.4 6.507 6.507 0 0 1 -3.018-5.49c0-3.584 2.916-6.5 6.5-6.5s6.5 2.916 6.5 6.5a6.513 6.513 0 0 1 -3.019 5.491 12.42 12.42 0 0 1 6.452 4.4c-2.328 2.925-5.912 4.809-9.933 4.809z"
+                      ></path>
+                    </svg>
+                  </div>
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </nav>
+
+      <main
+        class="grid grid-cols-1 lg:grid-cols-2 gap-6 my-12 mx-12 w-2xl container px-2 mx-auto"
+      >
+        <aside class="">
+          <div class="userProfil bg-white shadow rounded-lg p-10"></div>
+
+          <div class="bg-white shadow mt-6 rounded-lg p-6">
+            <h3 class="text-gray-600 text-sm font-semibold mb-4">Follower</h3>
+            <ul
+              class="userFollower flex items-center justify-center space-x-2"
+            ></ul>
+          </div>
+
+          <div class="bg-white shadow mt-6 rounded-lg p-6">
+            <h3 class="text-gray-600 text-sm font-semibold mb-4">Following</h3>
+            <ul
+              class="userFollowing flex items-center justify-center space-x-2"
+            ></ul>
+          </div>
+        </aside>
+
+        <article class="">
+          <div class="getUserPosts bg-gray-100"></div>
+        </article>
+      </main>
+    </div>
   </body>
+  <script
+    defer
+    src="https://unpkg.com/@alpinejs/collapse@3.x.x/dist/cdn.min.js"
+  ></script>
+  <script src="https://unpkg.com/alpinejs" defer></script>
+  <script src="../Assets/auth.js"></script>
+  <script src="../Assets/post.js"></script>
+  <script src="https://cdn.tailwindcss.com"></script>
 </html>

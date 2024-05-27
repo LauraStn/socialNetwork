@@ -13,14 +13,13 @@ const { Comment } = require("../Models/Comment");
 const addPost = async (req, res) => {
   const data = await verifyToken(req, res);
   if (!data) {
-    res.status(401).json({ error: "Unauthorized" });
+    res.status(401).json({ success: false, msg: "Unauthorized" });
     return;
   }
-  console.log(data);
   try {
     const user_id = data.user_id;
     if (!req.body.content) {
-      res.status(400).json({ error: "Missing fields" });
+      res.status(400).json({ success: false, msg: "Missing fields" });
       return;
     }
     const values = [user_id];
@@ -44,10 +43,10 @@ const addPost = async (req, res) => {
       .collection("post")
       .insertOne(newPost);
 
-    res.status(201).json(result);
+    res.status(201).json({ success: true, msg: "Post added" });
     return;
   } catch (error) {
-    res.status(500).json({ error: error.stack });
+    res.status(500).json({ success: false, msg: "Error server" });
     return;
   }
 };
@@ -55,12 +54,12 @@ const addPost = async (req, res) => {
 const updatePost = async (req, res) => {
   const data = await verifyToken(req, res);
   if (!data) {
-    res.status(401).json({ error: "Unauthorized" });
+    res.status(401).json({ success: false, msg: "Unauthorized" });
     return;
   }
   try {
     if (!req.body.content) {
-      res.status(400).json({ error: "Missing fields" });
+      res.status(400).json({ success: false, msg: "Missing fields" });
       return;
     }
     const content = req.body.content;
@@ -72,8 +71,7 @@ const updatePost = async (req, res) => {
       .findOne({ _id: new ObjectId(req.params.id) });
 
     if (post.user_id !== data.user_id) {
-      console.log(post.user_id, data.user_id);
-      res.status(401).json({ error: "Unauthorized" });
+      res.status(401).json({ success: false, msg: "Unauthorized" });
       return;
     }
     const result = await client
@@ -84,10 +82,10 @@ const updatePost = async (req, res) => {
         { $set: { content: content, image: image } }
       );
 
-    res.status(201).json(result);
+    res.status(201).json({ success: true, msg: "Post edited !" });
     return;
   } catch (error) {
-    res.status(500).json({ error: error.stack });
+    res.status(500).json({ success: false, msg: "error server" });
   }
 };
 
@@ -138,6 +136,20 @@ const getAllFollowingUserPost = async (req, res) => {
     return;
   }
 };
+const getOnePost = async (req, res) => {
+  try {
+    const getPost = await client
+      .db("socialNetwork")
+      .collection("post")
+      .findOne({ _id: new ObjectId(req.params._id) });
+
+    res.status(200).json(getPost);
+    return;
+  } catch (error) {
+    res.status(500).json("error");
+    return;
+  }
+};
 const getAllPost = async (req, res) => {
   const data = await verifyToken(req, res);
   if (!data) {
@@ -153,12 +165,10 @@ const getAllPost = async (req, res) => {
       return;
     }
     let array = [];
-    console.log(result);
     for (let i = 0; i < result.length; i++) {
       const element = result[i].following_user_id;
       array.push({ user_id: element });
     }
-
     const allPosts = await client
       .db("socialNetwork")
       .collection("post")
@@ -171,6 +181,7 @@ const getAllPost = async (req, res) => {
     return;
   }
 };
+
 const deletePost = async (req, res) => {
   const data = await verifyToken(req, res);
   if (!data) {
@@ -212,7 +223,7 @@ const like = async (req, res) => {
       .db("socialNetwork")
       .collection("post")
       .updateOne(
-        { _id: new ObjectId(req.params.id) },
+        { _id: new ObjectId(req.params._id) },
         { $addToSet: { like: data.user_id } }
       );
     res.status(200).json({ success: true, msg: "Liked !" });
@@ -237,7 +248,6 @@ const dislike = async (req, res) => {
         { _id: new ObjectId(req.params.id) },
         { $pull: { like: data.user_id } }
       );
-    console.log("Disliked");
     res.status(200).json({ success: true, msg: "Disliked !" });
     return;
   } catch (error) {
@@ -249,11 +259,10 @@ const dislike = async (req, res) => {
 const addComment = async (req, res) => {
   const data = await verifyToken(req, res);
   if (!data) {
-    res.status(401).json({ error: "Unauthorized" });
+    res.status(401).json({ success: false, msg: "Unauthorized" });
     return;
   }
   try {
-    console.log(data);
     const newComment = new Comment(
       data.user_id,
       new ObjectId(),
@@ -264,6 +273,10 @@ const addComment = async (req, res) => {
       new Date(),
       new Date()
     );
+    if (!req.body.content) {
+      res.status(400).json({ success: false, msg: "Missing fields" });
+      return;
+    }
     const commentPost = await client
       .db("socialNetwork")
       .collection("post")
@@ -274,7 +287,7 @@ const addComment = async (req, res) => {
     res.status(200).json({ success: true, msg: "AddComment" });
     return;
   } catch (error) {
-    res.status(500).json("error");
+    res.status(500).json({ success: false, msg: "error" });
     return;
   }
 };
@@ -330,6 +343,7 @@ module.exports = {
   getAllMyPost,
   getAllFollowingUserPost,
   getAllPost,
+  getOnePost,
   like,
   dislike,
   updatePost,

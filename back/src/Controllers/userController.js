@@ -14,10 +14,15 @@ const register = async (req, res) => {
       !req.body.first_name ||
       !req.body.last_name ||
       !req.body.email ||
-      !req.body.password
+      !req.body.password ||
+      !req.body.confirm_password
     ) {
-      res.status(400).json({ error: "Missing fields" });
+      res.status(400).json({ success: false, msg: "Missing fields" });
       console.log("missing fields");
+      return;
+    } else if (req.body.password !== req.body.confirm_password) {
+      res.status(400).json({ success: false, msg: "Password doesn't match" });
+      console.log("doesn't match");
       return;
     }
     const hashedPassword = await bcrypt.hash(req.body.password + "", 10);
@@ -37,12 +42,11 @@ const register = async (req, res) => {
       0,
       activationToken
     );
-
     const email = [user.email];
     const sqlverif = `SELECT email FROM user WHERE email=?`;
     const [verifEMail] = await pool.execute(sqlverif, email);
     if (verifEMail.length > 0) {
-      res.status(400).json({ message: "email already used" });
+      res.status(400).json({ success: false, msg: "email already used" });
       return;
     }
     const sql = `INSERT INTO user (email, password, first_name, last_name, image, token ) VALUES (?,?,?,?,?,?)`;
@@ -60,15 +64,12 @@ const register = async (req, res) => {
       to: user.email,
       subject: "Account activation",
       text: "Activate your email",
-      html: `<p>You need to activate your email, to access our services, please click on this link: <a href="http://localhost:2200/user/activate/${activationToken}">Activate your email</a></p>`,
+      html: `<p>You need to activate your email, to access our services, please click on this link: <a href="http://localhost:2200/user/validateAccount/${activationToken}">Activate your email</a></p>`,
     });
 
-    console.log("Message sent: %s", info.messageId);
-
-    res.status(201).json(rows);
+    res.status(201).json({ success: true, msg: "registration successful" });
   } catch (err) {
-    res.status(500).json({ error: err.stack });
-    console.log(err.stack);
+    res.status(500).json({ success: false, msg: "error server" });
   }
 };
 
@@ -82,11 +83,16 @@ const validateAccount = async (req, res) => {
       res.status(204).json("no content");
       return;
     }
-    await pool.query(
+    const update = await pool.query(
       `UPDATE user SET is_active=1, token = NULL WHERE token=?`,
       [value]
     );
-    res.status(200).json({ result: "good" });
+    console.log(update);
+    if (update[0].affectedRows === 1) {
+      return res.redirect("http://127.0.0.1:5500/Views/login.html");
+    } else {
+      return res.redirect("http://google.fr");
+    }
   } catch (error) {
     res.status(500).json({ error: error.stack });
     return;
@@ -98,19 +104,21 @@ const login = async (req, res) => {
     const email = req.body.email;
     const password = req.body.password;
     if (!email || !password) {
-      res.status(400).json({ error: "Missing fields" });
+      res.status(400).json({ success: false, msg: "Missing fields" });
       return;
     }
     const values = [email];
-    const sql = `SELECT * FROM user WHERE email=?`;
+    const sql = `SELECT * FROM user WHERE email=? AND is_active = 1`;
     const [user] = await pool.execute(sql, values);
     if (!user.length) {
-      res.status(401).json({ error: "Email not found" });
+      res
+        .status(401)
+        .json({ success: false, msg: "Email not found or account inactive" });
       return;
     }
     const isValidPassword = await bcrypt.compare(password, user[0].password);
     if (!isValidPassword) {
-      res.status(401).json({ error: "Wrong credentials" });
+      res.status(401).json({ success: false, msg: "Wrong credentials" });
       return;
     } else {
       console.log(user);
@@ -127,6 +135,7 @@ const login = async (req, res) => {
         { expiresIn: "24h" }
       );
       res.status(200).json({
+        success: true,
         jwt: token,
         role_id: user[0].role_id,
         firstName: user[0].first_name,
@@ -135,18 +144,24 @@ const login = async (req, res) => {
       return;
     }
   } catch (error) {
-    res.status(500).json({ error: error.stack });
+    res.status(500).json({ success: false, msg: "error server" });
     return;
   }
 };
 
 const getAllUsers = async (req, res) => {
+  const data = await verifyToken(req);
+  console.log(data);
+  if (!data) {
+    res.status(401).json({ error: "Unauthorized" });
+    return;
+  }
   try {
     const [rows] = await pool.query("SELECT * FROM user");
     console.log(rows);
-    res.json(rows);
+    res.status(200).json(rows);
   } catch (err) {
-    console.log(err.stack);
+    res.status(500).json({ message: "erreur serveur" });
   }
 };
 
@@ -158,7 +173,6 @@ const updateUser = async (req, res) => {
     const [result] = await pool.execute(sql, values);
     res.status(200).json(result);
   } catch (error) {
-    console.log(error.stack);
     res.status(500).json({ message: "erreur serveur" });
   }
 };
@@ -176,18 +190,16 @@ const deleteUser = async (req, res) => {
     const [result] = await pool.execute(sql, values);
     res.status(200).json(result);
   } catch (error) {
-    console.log(error.stack);
     res.status(500).json({ message: "erreur serveur" });
   }
 };
 
-const getOneUser = async (req, res) => {
+const getUserOnline = async (req, res) => {
   const data = await verifyToken(req);
   if (!data) {
     res.status(401).json({ error: "Unauthorized" });
     return;
   }
-  console.log(data);
   try {
     const id = data.user_id;
     const values = [id];
@@ -196,7 +208,35 @@ const getOneUser = async (req, res) => {
     const [result] = await pool.execute(sql, values);
     res.status(200).json(result);
   } catch (error) {
-    console.log(error.stack);
+    res.status(500).json({ message: "erreur serveur" });
+  }
+};
+
+const getAllUser = async (req, res) => {
+  const data = await verifyToken(req);
+  if (!data) {
+    res.status(401).json({ error: "Unauthorized" });
+    return;
+  }
+  try {
+    const sql = `SELECT * FROM user`;
+
+    const [result] = await pool.execute(sql, values);
+    res.status(200).json(result);
+  } catch (error) {
+    res.status(500).json({ message: "erreur serveur" });
+  }
+};
+
+const getOneUser = async (req, res) => {
+  try {
+    const id = req.params.user_id;
+    const values = [id];
+    const sql = `SELECT * FROM user WHERE user_id=?`;
+
+    const [result] = await pool.execute(sql, values);
+    res.status(200).json(result);
+  } catch (error) {
     res.status(500).json({ message: "erreur serveur" });
   }
 };
@@ -208,7 +248,7 @@ const banUser = async (req, res) => {
     return;
   }
   try {
-    const values = [req.body.user_id];
+    const values = [req.params.user_id];
     const sql = `UPDATE user SET is_active = 0 WHERE user_id = ?`;
     const [result] = await pool.execute(sql, values);
     res.status(200).json(result);
@@ -220,14 +260,14 @@ const banUser = async (req, res) => {
 
 const searchUser = async (req, res) => {
   const data = await verifyToken(req);
-  if (data.role_id !== 1) {
+  if (!data) {
     res.status(401).json({ error: "Unauthorized" });
     return;
   }
   try {
     const search = req.body.search;
     const [rows] = await pool.query(
-      `SELECT * FROM user WHERE first_name LIKE "%${search}%" OR last_name LIKE "%${search}%" OR email LIKE "%${search}%"`
+      `SELECT * FROM user WHERE first_name LIKE "%${search}%" OR last_name LIKE "%${search}%"`
     );
     res.status(200).json(rows);
   } catch (error) {
@@ -238,17 +278,27 @@ const searchUser = async (req, res) => {
 
 const resetPassword = async (req, res) => {
   try {
-    const email = req.body.email;
-    if (!email) {
-      res.status(400).json({ error: "Enter your email" });
-      console.log("enter your email");
+    if (!req.body.email) {
+      res.status(400).json({ success: false, msg: "Enter your email !" });
       return;
     }
+    const email = req.body.email;
     const value = [email];
     const sql = `SELECT * FROM user WHERE email = ?`;
     const [result] = await pool.execute(sql, value);
-    if (!result) {
-      res.status(400).json({ message: "email not found" });
+
+    if (result.length < 1) {
+      res.status(404).json({ success: false, msg: "Email not found" });
+      return;
+    }
+    let activationToken = await bcrypt.hash(req.body.email, 10);
+    activationToken = activationToken.replaceAll("/", "");
+
+    const updateValue = [activationToken, result[0].email];
+    const updateSql = `UPDATE user SET token = ? WHERE email = ?`;
+    const [rows] = await pool.execute(updateSql, updateValue);
+    if (rows.affectedRows === 0) {
+      res.status(400).json({ success: false, msg: "Failed" });
       return;
     }
     const info = await transporter.sendMail({
@@ -256,25 +306,57 @@ const resetPassword = async (req, res) => {
       to: result[0].email,
       subject: "Reset password",
       text: "Reset your password",
-      html: `<p>Someone (probably you) requested to reset the password to your account. If you didn\'t submit this request, ignore this email, and your password will not be changed. Please click on this link: <a href="http://localhost:2200/user/changepassword/${result[0].user_id}">Reset your password</a></p>`,
+      html: `<p>Someone (probably you) requested to reset the password to your account. If you didn\'t submit this request, ignore this email, and your password will not be changed. Please click on this link: <a href="http://localhost:2200/user/redirectPassword/${activationToken}">Reset your password</a></p>`,
     });
-    console.log(result[0].user_id);
-    res.status(201).json({ success: true, msg: "email send" });
+    res.status(201).json({ success: true, msg: "Email send" });
+  } catch (error) {
+    res.status(500).json({ success: false, msg: "Error server" });
+    console.log(error.stack);
+  }
+};
+
+const redirectPassword = async (req, res) => {
+  try {
+    const token = req.params.token;
+
+    const value = [token];
+    const sql = `SELECT * FROM user WHERE token = ?`;
+    const [result] = await pool.execute(sql, value);
+    console.log(result);
+    if (result.length < 1) {
+      res.status(400).json({ message: "this link has expired" });
+      return;
+    }
+    return res.redirect(
+      `http://127.0.0.1:5500/Views/updatepassword.html?token=${token}`
+    );
   } catch (error) {
     res.status(500).json({ error: error.stack });
-    console.log(error.stack);
   }
 };
 
 const updatePassword = async (req, res) => {
   try {
-    const id = req.params.user_id;
+    if (!req.body.password || !req.body.confirm_password) {
+      res.status(400).json({ success: false, msg: "Missing fields" });
+      console.log("missing fields");
+      return;
+    } else if (req.body.password !== req.body.confirm_password) {
+      res.status(400).json({ success: false, msg: "Password doesn't match" });
+      console.log("doesn't match");
+      return;
+    }
+    const token = req.body.token;
     const hashedPassword = await bcrypt.hash(req.body.password + "", 10);
-
-    const values = [hashedPassword, id];
-    const sql = `UPDATE user SET password=? WHERE user_id=?`;
+    console.log(token);
+    const values = [hashedPassword, token];
+    const sql = `UPDATE user SET password=?,token = NULL WHERE token=?`;
     const [result] = await pool.execute(sql, values);
     console.log(result);
+    if (result.affectedRows === 0) {
+      console.log("raté");
+      return;
+    }
     res.status(200).json({ success: true, msg: "password changed" });
   } catch (error) {
     res.status(500).json({ message: "erreur serveur" });
@@ -289,12 +371,38 @@ const follow = async (req, res) => {
     return;
   }
   try {
-    const following_id = req.body.user_id;
+    const following_id = req.params.user_id;
     const follower_id = data.user_id;
+    console.log(follower_id, following_id);
     const values = [following_id, follower_id];
     const sql = `INSERT INTO follow (following_user_id, follower_user_id) VALUES (?,?)`;
     const [result] = await pool.execute(sql, values);
+    console.log("follow");
     res.status(201).json({ success: true, msg: "follow" });
+  } catch (error) {
+    res.status(500).json({ message: "erreur serveur" });
+    return;
+  }
+};
+
+const verifFollow = async (req, res) => {
+  const data = await verifyToken(req);
+  if (!data) {
+    res.status(401).json({ error: "Unauthorized" });
+    return;
+  }
+  try {
+    const following_id = req.params.user_id;
+    const follower_id = data.user_id;
+    const values = [follower_id, following_id];
+    const sql = `SELECT * FROM follow WHERE follower_user_id = ? AND following_user_id = ?`;
+    const [result] = await pool.execute(sql, values);
+    if (result.length < 1) {
+      console.log(result);
+      res.status(200).json({ success: false, msg: "no content" });
+      return;
+    }
+    res.status(201).json({ success: true, result: result });
   } catch (error) {
     res.status(500).json({ message: "erreur serveur" });
     return;
@@ -308,11 +416,12 @@ const unfollow = async (req, res) => {
     return;
   }
   try {
-    const following_id = req.body.user_id;
+    const following_id = req.params.user_id;
     const follower_id = data.user_id;
     const values = [following_id, follower_id];
     const sql = `DELETE FROM follow WHERE following_user_id = ? AND follower_user_id = ?`;
     const [result] = await pool.execute(sql, values);
+    console.log("unfollow");
     res.status(200).json({ success: true, msg: "unfollow" });
   } catch (error) {
     console.log(error.stack);
@@ -320,7 +429,7 @@ const unfollow = async (req, res) => {
   }
 };
 
-const getAllUserFollower = async (req, res) => {
+const getAllMyFollower = async (req, res) => {
   const data = await verifyToken(req);
   if (!data) {
     res.status(401).json({ error: "Unauthorized" });
@@ -338,7 +447,7 @@ const getAllUserFollower = async (req, res) => {
   }
 };
 
-const getAllUserFollowing = async (req, res) => {
+const getAllMyFollowing = async (req, res) => {
   const data = await verifyToken(req);
   if (!data) {
     res.status(401).json({ error: "Unauthorized" });
@@ -346,6 +455,33 @@ const getAllUserFollowing = async (req, res) => {
   }
   try {
     const follower_id = data.user_id;
+    const values = [follower_id];
+    const sql = `SELECT * FROM follow INNER JOIN user ON user.user_id = follow.following_user_id WHERE follower_user_id = ?`;
+    const [result] = await pool.execute(sql, values);
+    console.log(result);
+    res.status(200).json(result);
+  } catch (error) {
+    console.log(error.stack);
+    res.status(500).json({ message: "erreur serveur" });
+  }
+};
+
+const getAllUserFollower = async (req, res) => {
+  try {
+    const following_id = req.params.user_id;
+    const values = [following_id];
+    const sql = `SELECT * FROM follow INNER JOIN user ON user.user_id = follow.follower_user_id WHERE following_user_id = ?`;
+    const [result] = await pool.execute(sql, values);
+    res.status(200).json(result);
+  } catch (error) {
+    console.log(error.stack);
+    res.status(500).json({ message: "erreur serveur" });
+  }
+};
+
+const getAllUserFollowing = async (req, res) => {
+  try {
+    const follower_id = req.params.user_id;
     const values = [follower_id];
     const sql = `SELECT * FROM follow INNER JOIN user ON user.user_id = follow.following_user_id WHERE follower_user_id = ?`;
     const [result] = await pool.execute(sql, values);
@@ -363,13 +499,19 @@ module.exports = {
   getAllUsers,
   updateUser,
   deleteUser,
+  getUserOnline,
   getOneUser,
+  getAllUser,
   banUser,
   searchUser,
   resetPassword,
+  redirectPassword,
   updatePassword,
+  verifFollow,
   follow,
   unfollow,
+  getAllMyFollower,
+  getAllMyFollowing,
   getAllUserFollower,
   getAllUserFollowing,
 };

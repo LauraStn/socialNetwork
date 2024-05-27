@@ -10,7 +10,6 @@ const storage = multer.diskStorage({
     cb(null, uploadDirectory);
   },
   filename: function (req, file, cb) {
-    console.log(file);
     const imageName = file.originalname.split(".");
     newFileName = `${imageName[0]}-${Date.now()}${path.extname(
       file.originalname

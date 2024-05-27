@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Document</title>
   </head>
-  <body class="bg-gray-100">
+  <body>
     <nav
       class="bg-white w-full flex relative shadow justify-between items-center px-8 h-20"
     >
@@ -30,46 +30,37 @@
         <a href="./home.html">Home</a>
       </div>
 
-      <div class="relative hidden sm:block flex-shrink flex-grow-0">
-        <ul class="authBtn flex gap-6">
-          <li>
-            <a href="./login.html">Login</a>
-          </li>
-          <li>
-            <a href="./register.html">Register</a>
-          </li>
-        </ul>
+      <div class="relative sm:block flex-shrink flex-grow-0">
+        <input
+          type="text"
+          id="search"
+          class="bg-purple-white bg-gray-100 rounded-lg border-0 p-3 w-full"
+          placeholder="Search..."
+          style="min-width: 300px"
+        />
+        <div class="absolute top-0 right-0 p-4 pr-3 text-purple-lighter">
+          <button onclick="search()">
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              class="h-5 w-5"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
+              ></path>
+            </svg>
+          </button>
+        </div>
       </div>
 
       <div class="flex-initial">
         <div class="flex justify-end items-center relative">
-          <div class="flex mr-4 items-center">
-            <div class="block relative">
-              <a
-                href="./search.html"
-                class="inline-block py-2 px-3 hover:bg-gray-200 rounded-full relative"
-              >
-                <div class="flex items-center h-5">
-                  <div class="_xpkakx">
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      class="h-5 w-5"
-                      fill="none"
-                      viewBox="0 0 24 24"
-                      stroke="currentColor"
-                    >
-                      <path
-                        stroke-linecap="round"
-                        stroke-linejoin="round"
-                        stroke-width="2"
-                        d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
-                      ></path>
-                    </svg>
-                  </div>
-                </div>
-              </a>
-            </div>
-          </div>
+          <div class="flex mr-4 items-center"></div>
 
           <div class="block">
             <div class="inline relative">
@@ -124,7 +115,7 @@
               </button>
             </div>
             <div
-              class="flex flex-col gap-2 absolute py-2 px-3 top-[42px] left-[54px] bg-white border invisible"
+              class="flex flex-col gap-2 absolute py-2 px-3 top-[42px] left-[10px] bg-white border invisible"
               id="subMenuNav"
             >
               <ul>
@@ -153,7 +144,7 @@
     </nav>
     <main>
       <div
-        class="displayAllUsers flex items-center justify-between pb-6 pt-4 gap-5 min-h-screen flex-wrap bg-gray-200"
+        class="searchResults flex items-center justify-between pb-6 pt-4 gap-5 min-h-screen flex-wrap bg-gray-200"
       ></div>
     </main>
   </body>
