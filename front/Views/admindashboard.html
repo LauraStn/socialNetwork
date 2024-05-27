@@ -151,11 +151,25 @@
         </div>
       </div>
     </nav>
-    <main>
-      <div
-        class="displayAllUsers flex items-center justify-between pb-6 pt-4 gap-5 min-h-screen flex-wrap bg-gray-200"
-      ></div>
-    </main>
+    <div class="app bg-gray-100">
+      <main
+        class="grid grid-cols-1 lg:grid-cols-2 gap-6 my-12 mx-12 w-2xl container px-2 mx-auto"
+      >
+        <aside class="">
+          <div class="profil bg-white shadow rounded-lg p-10"></div>
+
+          <div
+            class="flex justify-center items-center w-full mt-4 min-width: 400px"
+          ></div>
+        </aside>
+
+        <article class="">
+          <div
+            class="allUsersAdmin flex items-center justify-between pb-6 pt-4 gap-5 min-h-screen flex-wrap bg-gray-100"
+          ></div>
+        </article>
+      </main>
+    </div>
   </body>
   <script src="../Assets/auth.js"></script>
   <script src="../Assets/post.js"></script>

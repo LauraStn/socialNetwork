@@ -8,6 +8,10 @@ const sendResetMsg = document.querySelector(".sendResetMsg");
 const updatePasswordBtn = document.querySelector(".updatePasswordBtn");
 const updatePasswordMsg = document.querySelector(".updatePasswordMsg");
 const profil = document.querySelector(".profil");
+const authBtn = document.querySelector(".authBtn");
+const userDashboardNav = document.querySelector(".userDashboardNav");
+const adminDashboardNav = document.querySelector(".adminDashboardNav");
+const logOutBtn = document.querySelector(".logOutBtn");
 
 async function register() {
   const first_name = document.querySelector("#first_nameR").value;
@@ -60,23 +64,23 @@ async function login() {
   let email = document.querySelector("#email").value;
   let password = document.querySelector("#password").value;
 
-  let user = {
+  const user = {
     email: email,
     password: password,
   };
 
-  let request = {
+  const request = {
     method: "POST",
     headers: {
       "Content-Type": "application/json; charset=utf-8",
     },
     body: JSON.stringify(user),
   };
-  let apiRequest = await fetch("http://localhost:2200/user/login", request);
-  let result = await apiRequest.json();
-
-  if (apiRequest.status !== 200) {
-    loginMsg.innerHTML = `<p class="mt-7 text-center rounded-lg text-red-500">Invalid credentials or account not actived</p>`;
+  const apiRequest = await fetch("http://localhost:2200/user/login", request);
+  const result = await apiRequest.json();
+  console.log(result);
+  if (!result.success) {
+    loginMsg.innerHTML = `<p class="mt-7 text-center rounded-lg text-red-500">${result.msg}</p>`;
     return;
   } else {
     const data = await result;
@@ -87,12 +91,12 @@ async function login() {
       redirect...</p>`;
     if (data.role_id === 1) {
       setTimeout(() => {
-        window.location.href = "../../Views/admin/adminDashboard.html";
+        window.location.href = "./admindashboard.html";
       }, "3000");
       return;
     } else {
       setTimeout(() => {
-        window.location.href = "./index.html";
+        window.location.href = "./home.html";
       }, "3000");
       return;
     }
@@ -116,17 +120,17 @@ async function getOneUser() {
       Authorization: `Bearer ${jwt}`,
     },
   };
-  const getAll = await fetch(`http://localhost:2200/user/one`, request);
+  const getAll = await fetch(`http://localhost:2200/user/useronline`, request);
   const [result] = await getAll.json();
 
   let getAllFollowing = await fetch(
-    `http://localhost:2200/user/allfollowing`,
+    `http://localhost:2200/user/allmyfollowing`,
     request
   );
   let following = await getAllFollowing.json();
 
   let getAllFollower = await fetch(
-    `http://localhost:2200/user/allfollower`,
+    `http://localhost:2200/user/allmyfollower`,
     request
   );
   let follower = await getAllFollower.json();
@@ -271,4 +275,35 @@ async function validateAccount() {
   if (result.success) {
     console.log("cool");
   }
+}
+
+(function isConnected() {
+  const jwt = localStorage.getItem("token");
+  const role_id = localStorage.getItem("role_id");
+  if (jwt !== null) {
+    if (authBtn) {
+      authBtn.classList.add("hidden");
+    }
+    if (logOutBtn) {
+      logOutBtn.classList.remove("hidden");
+    }
+    if (role_id === "2") {
+      userDashboardNav.classList.remove("hidden");
+    } else {
+      adminDashboardNav.classList.remove("hidden");
+    }
+  }
+})();
+
+function logout() {
+  window.localStorage.removeItem("token");
+  window.localStorage.removeItem("role_id");
+}
+
+if (logOutBtn) {
+  logOutBtn.addEventListener("click", (e) => {
+    e.preventDefault;
+    logout();
+    window.alert("Disconnected successfull");
+  });
 }
