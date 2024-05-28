@@ -87,11 +87,10 @@ const validateAccount = async (req, res) => {
       `UPDATE user SET is_active=1, token = NULL WHERE token=?`,
       [value]
     );
-    console.log(update);
     if (update[0].affectedRows === 1) {
       return res.redirect("http://127.0.0.1:5500/Views/login.html");
     } else {
-      return res.redirect("http://google.fr");
+      return res.redirect("http://127.0.0.1:5500/Views/index.html");
     }
   } catch (error) {
     res.status(500).json({ error: error.stack });
