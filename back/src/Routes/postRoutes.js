@@ -13,7 +13,9 @@ const {
   getAllFollowingUserPost,
   getAllPost,
   getOnePost,
+  getAllUserPost,
 } = require("../Controllers/postController");
+const { getAllUser } = require("../Controllers/userController");
 
 const router = express.Router();
 
@@ -28,5 +30,6 @@ router.patch("/deletecomment/:_id", deleteComment);
 router.get("/mine", getAllMyPost);
 router.get("/getalluserpost", getAllFollowingUserPost);
 router.get("/getall", getAllPost);
+router.get("/getoneuserpost/:id", getAllUserPost);
 
 module.exports = router;

@@ -63,18 +63,19 @@ const updatePost = async (req, res) => {
       return;
     }
     const content = req.body.content;
-    const image = req.file.filename;
 
     const post = await client
       .db("socialNetwork")
       .collection("post")
       .findOne({ _id: new ObjectId(req.params.id) });
+    const image = req.file ? req.file.filename : post.image;
 
     if (post.user_id !== data.user_id) {
       res.status(401).json({ success: false, msg: "Unauthorized" });
       return;
     }
-    const result = await client
+
+    await client
       .db("socialNetwork")
       .collection("post")
       .updateOne(
@@ -82,7 +83,9 @@ const updatePost = async (req, res) => {
         { $set: { content: content, image: image } }
       );
 
-    res.status(201).json({ success: true, msg: "Post edited !" });
+    res
+      .status(201)
+      .json({ success: true, msg: `Post edited with image ${image} !` });
     return;
   } catch (error) {
     res.status(500).json({ success: false, msg: "error server" });
@@ -108,6 +111,28 @@ const getAllMyPost = async (req, res) => {
   }
 };
 
+const getAllUserPost = async (req, res) => {
+  const data = await verifyToken(req, res);
+  if (!data) {
+    res.status(401).json({ error: "Unauthorized" });
+    return;
+  }
+  try {
+    const id = req.params.id;
+    const allUserPosts = await client
+      .db("socialNetwork")
+      .collection("post")
+      .find({ user_id: id });
+    console.log(id);
+    const result = await allUserPosts.toArray();
+
+    console.log(result);
+    res.status(200).json(result);
+  } catch (error) {
+    res.status(500).json({ error: error.stack });
+    return;
+  }
+};
 const getAllFollowingUserPost = async (req, res) => {
   const data = await verifyToken(req, res);
   if (!data) {
@@ -136,6 +161,7 @@ const getAllFollowingUserPost = async (req, res) => {
     return;
   }
 };
+
 const getOnePost = async (req, res) => {
   try {
     const getPost = await client
@@ -150,6 +176,7 @@ const getOnePost = async (req, res) => {
     return;
   }
 };
+
 const getAllPost = async (req, res) => {
   const data = await verifyToken(req, res);
   if (!data) {
@@ -341,6 +368,7 @@ const deleteComment = async (req, res) => {
 module.exports = {
   addPost,
   getAllMyPost,
+  getAllUserPost,
   getAllFollowingUserPost,
   getAllPost,
   getOnePost,
